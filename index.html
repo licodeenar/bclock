@@ -17,21 +17,16 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
     <link rel="icon" href="/bclock/img/favicon.png" />
     <link rel="preconnect" href="https://fonts.gstatic.com" />
-
     <link
-      href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Fira+Code&family=Orbitron:wght@700&family=VT323&family=Share+Tech+Mono&family=Bebas+Neue&display=swap"
       rel="stylesheet"
     />
-
     <style>
-      html {
-        height: 100%;
-      }
+      html { height: 100%; }
       body {
-        margin: 0px;
-        font-family: "Fira Code", monospace;
-        color: #ffffff;
-        background-color: #000000;
+        margin: 0;
+        color: #fff;
+        background-color: #000;
       }
       #container {
         background-position: center center;
@@ -40,84 +35,369 @@
         height: 100vh;
       }
       .menu {
-        text-align: right;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 6px;
+        padding: 6px;
+        position: relative;
+        z-index: 10;
       }
-      .img_button {
-        width: 32px;
-      }
+      .img_button { width: 32px; }
       .btn {
-        margin: 2px;
         outline: none;
-        appearance: button;
         box-sizing: border-box;
         border-radius: 5px;
         border: none;
         width: 48px;
         height: 48px;
+        background: rgba(0, 0, 0, 0.6);
+        cursor: pointer;
+        color: #fff;
+        font-size: 22px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        vertical-align: middle;
       }
+      .btn:hover { background: rgba(255, 255, 255, 0.2); }
+      .btn[data-tooltip] { position: relative; }
+      .btn[data-tooltip]::after {
+        content: attr(data-tooltip);
+        position: absolute;
+        top: calc(100% + 8px);
+        right: 0;
+        background: rgba(0, 0, 0, 0.8);
+        color: #fff;
+        font-family: "Fira Code", monospace;
+        font-size: 12px;
+        white-space: nowrap;
+        padding: 5px 10px;
+        border-radius: 5px;
+        pointer-events: none;
+        opacity: 0;
+        transform: translateY(-4px);
+        transition: opacity 0.15s, transform 0.15s;
+      }
+      .btn[data-tooltip]:hover::after {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* ── 設定オーバーレイ ── */
+      #settings-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 50;
+      }
+      #settings-overlay.open { display: block; }
+
+      /* ── 設定パネル ── */
+      #settings-panel {
+        position: fixed;
+        top: 0;
+        right: -340px;
+        width: 320px;
+        height: 100vh;
+        background: rgba(8, 8, 18, 0.93);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        border-left: 1px solid rgba(255, 255, 255, 0.12);
+        transition: right 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+        padding: 20px;
+        box-sizing: border-box;
+        z-index: 100;
+        overflow-y: auto;
+        font-family: "Fira Code", monospace;
+      }
+      #settings-panel.open { right: 0; }
+
+      .settings-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 28px;
+      }
+      .settings-title {
+        font-size: 15px;
+        letter-spacing: 3px;
+        color: #fff;
+        text-transform: uppercase;
+      }
+      .settings-close {
+        background: none;
+        border: none;
+        color: #777;
+        font-size: 20px;
+        cursor: pointer;
+        padding: 4px 8px;
+        border-radius: 4px;
+        line-height: 1;
+      }
+      .settings-close:hover { color: #fff; background: rgba(255, 255, 255, 0.08); }
+
+      .settings-section { margin-bottom: 28px; }
+      .settings-label {
+        font-size: 10px;
+        letter-spacing: 2.5px;
+        text-transform: uppercase;
+        color: #666;
+        margin-bottom: 10px;
+      }
+
+      /* フォント選択 */
+      .font-options { display: flex; flex-direction: column; gap: 6px; }
+      .font-option {
+        padding: 10px 14px;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(255, 255, 255, 0.03);
+        cursor: pointer;
+        transition: border-color 0.15s, background 0.15s;
+        display: flex;
+        align-items: baseline;
+        gap: 12px;
+      }
+      .font-option:hover {
+        border-color: rgba(255, 255, 255, 0.25);
+        background: rgba(255, 255, 255, 0.06);
+      }
+      .font-option.selected {
+        border-color: #4a9eff;
+        background: rgba(74, 158, 255, 0.1);
+      }
+      .font-option-name {
+        font-size: 11px;
+        color: #888;
+        min-width: 118px;
+        font-family: "Fira Code", monospace;
+      }
+      .font-option.selected .font-option-name { color: #7bb8ff; }
+      .font-option-preview {
+        font-size: 26px;
+        color: #fff;
+        line-height: 1;
+      }
+
+      /* 背景自動切替 */
+      .interval-options { display: flex; flex-wrap: wrap; gap: 7px; }
+      .interval-option {
+        padding: 8px 14px;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(255, 255, 255, 0.03);
+        cursor: pointer;
+        color: #aaa;
+        font-size: 13px;
+        font-family: "Fira Code", monospace;
+        transition: border-color 0.15s, background 0.15s, color 0.15s;
+      }
+      .interval-option:hover {
+        border-color: rgba(255, 255, 255, 0.25);
+        background: rgba(255, 255, 255, 0.06);
+        color: #fff;
+      }
+      .interval-option.selected {
+        border-color: #4a9eff;
+        background: rgba(74, 158, 255, 0.1);
+        color: #fff;
+      }
+
+      /* トグルスイッチ */
+      .toggle-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 4px 0;
+      }
+      .toggle-text { color: #aaa; font-size: 13px; }
+      .toggle-switch {
+        position: relative;
+        width: 44px;
+        height: 24px;
+        cursor: pointer;
+      }
+      .toggle-switch input { opacity: 0; width: 0; height: 0; }
+      .toggle-track {
+        position: absolute;
+        inset: 0;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 12px;
+        transition: background 0.2s, border-color 0.2s;
+      }
+      .toggle-track::after {
+        content: '';
+        position: absolute;
+        width: 18px;
+        height: 18px;
+        background: #777;
+        border-radius: 50%;
+        top: 2px;
+        left: 2px;
+        transition: left 0.2s, background 0.2s;
+      }
+      .toggle-switch input:checked ~ .toggle-track {
+        background: rgba(74, 158, 255, 0.25);
+        border-color: #4a9eff;
+      }
+      .toggle-switch input:checked ~ .toggle-track::after {
+        left: 22px;
+        background: #4a9eff;
+      }
+
+      /* 時計 */
       @media (max-width: 670px) {
-        /* スマホ */
-        .clock {
-          margin-top: 50px;
-          font-size: 90px;
-          text-align: center;
-        }
+        .clock { margin-top: 50px; font-size: 90px; text-align: center; }
       }
       @media (max-width: 1100px) and (min-width: 671px) {
-        /* タブレット */
-        .clock {
-          margin-top: 100px;
-          font-size: 160px;
-          text-align: center;
-        }
+        .clock { margin-top: 100px; font-size: 160px; text-align: center; }
       }
       @media (min-width: 1101px) {
-        /* パソコン */
-        .clock {
-          margin-top: 120px;
-          font-size: 230px;
-          text-align: center;
-        }
+        .clock { margin-top: 120px; font-size: 230px; text-align: center; }
       }
     </style>
     <script>
+      const FONTS = [
+        { name: 'Fira Code',       css: '"Fira Code", monospace'      },
+        { name: 'Orbitron',        css: '"Orbitron", sans-serif'       },
+        { name: 'VT323',           css: '"VT323", monospace'           },
+        { name: 'Share Tech Mono', css: '"Share Tech Mono", monospace' },
+        { name: 'Bebas Neue',      css: '"Bebas Neue", cursive'        },
+      ];
+
+      const INTERVALS = [
+        { value: 0,  label: 'オフ'  },
+        { value: 1,  label: '1分'   },
+        { value: 3,  label: '3分'   },
+        { value: 5,  label: '5分'   },
+        { value: 10, label: '10分'  },
+      ];
+
+      let currentFont     = 'Fira Code';
+      let currentInterval = 0;
+      let showSeconds     = false;
+      let autoSwitchTimer = null;
+      let reloadImgFn     = null;
+
+      function loadFromStorage() {
+        currentFont     = localStorage.getItem('bclock_font')     || 'Fira Code';
+        currentInterval = parseInt(localStorage.getItem('bclock_interval') || '0', 10);
+        showSeconds     = localStorage.getItem('bclock_seconds')  === 'true';
+      }
+
+      function saveToStorage() {
+        localStorage.setItem('bclock_font',     currentFont);
+        localStorage.setItem('bclock_interval', currentInterval);
+        localStorage.setItem('bclock_seconds',  showSeconds);
+      }
+
+      function applyFont(fontName) {
+        const font = FONTS.find(f => f.name === fontName) || FONTS[0];
+        currentFont = font.name;
+        document.getElementById('clock-display').style.fontFamily = font.css;
+      }
+
+      function applyAutoSwitch(minutes) {
+        clearInterval(autoSwitchTimer);
+        autoSwitchTimer = null;
+        currentInterval = minutes;
+        if (minutes > 0 && reloadImgFn) {
+          autoSwitchTimer = setInterval(reloadImgFn, minutes * 60 * 1000);
+        }
+      }
+
+      function selectFont(fontName) {
+        applyFont(fontName);
+        saveToStorage();
+        document.querySelectorAll('.font-option').forEach(el => {
+          el.classList.toggle('selected', el.dataset.font === fontName);
+        });
+      }
+
+      function selectInterval(minutes) {
+        applyAutoSwitch(minutes);
+        saveToStorage();
+        document.querySelectorAll('.interval-option').forEach(el => {
+          el.classList.toggle('selected', parseInt(el.dataset.value, 10) === minutes);
+        });
+      }
+
+      function buildSettingsPanel() {
+        const fontContainer = document.getElementById('font-options');
+        FONTS.forEach(font => {
+          const el = document.createElement('div');
+          el.className = 'font-option' + (currentFont === font.name ? ' selected' : '');
+          el.dataset.font = font.name;
+          el.innerHTML =
+            '<span class="font-option-name">' + font.name + '</span>' +
+            '<span class="font-option-preview" style="font-family:' + font.css + '">0:00</span>';
+          el.addEventListener('click', () => selectFont(font.name));
+          fontContainer.appendChild(el);
+        });
+
+        const intervalContainer = document.getElementById('interval-options');
+        INTERVALS.forEach(interval => {
+          const el = document.createElement('div');
+          el.className = 'interval-option' + (currentInterval === interval.value ? ' selected' : '');
+          el.dataset.value = interval.value;
+          el.textContent = interval.label;
+          el.addEventListener('click', () => selectInterval(interval.value));
+          intervalContainer.appendChild(el);
+        });
+
+        const toggle = document.getElementById('toggle-seconds');
+        toggle.checked = showSeconds;
+        toggle.addEventListener('change', function() {
+          showSeconds = this.checked;
+          saveToStorage();
+        });
+      }
+
       window.onload = function() {
-        var reloadImg = (function reloadImg() {
-          // 背景をランダム表示
-          document.getElementById("container").style.backgroundImage =
-            "url('./img/" +
-            ("0" + Math.floor(Math.random() * 13)).slice(-2) +
-            ".jpg')";
+        loadFromStorage();
+
+        reloadImgFn = (function reloadImg() {
+          document.getElementById('container').style.backgroundImage =
+            "url('./img/" + ('0' + Math.floor(Math.random() * 13)).slice(-2) + ".jpg')";
           return reloadImg;
         })();
 
-        // 背景リロード
-        document
-          .getElementById("btn_reload")
-          .addEventListener("click", function() {
-            reloadImg();
-          });
+        buildSettingsPanel();
+        applyFont(currentFont);
+        applyAutoSwitch(currentInterval);
 
-        // フルスクリーン表示切替
-        document
-          .getElementById("btn_fullscreen")
-          .addEventListener("click", function() {
-            if (!document.fullscreenElement) {
-              document.body.requestFullscreen();
-            } else {
-              document.exitFullscreen();
-            }
-          });
+        document.getElementById('btn_reload').addEventListener('click', reloadImgFn);
+        const btnFullscreen = document.getElementById('btn_fullscreen');
+        btnFullscreen.addEventListener('click', function() {
+          if (!document.fullscreenElement) document.body.requestFullscreen();
+          else document.exitFullscreen();
+        });
+        document.addEventListener('fullscreenchange', function() {
+          btnFullscreen.dataset.tooltip = document.fullscreenElement
+            ? '全画面を解除する'
+            : '全画面にする';
+        });
 
-        // 時計を表示
+        const panel   = document.getElementById('settings-panel');
+        const overlay = document.getElementById('settings-overlay');
+        function openSettings()  { panel.classList.add('open');    overlay.classList.add('open');    }
+        function closeSettings() { panel.classList.remove('open'); overlay.classList.remove('open'); }
+
+        document.getElementById('btn_settings').addEventListener('click', openSettings);
+        document.getElementById('settings-close').addEventListener('click', closeSettings);
+        overlay.addEventListener('click', closeSettings);
+
         setInterval(
           (function showClock() {
-            let now = new Date();
-            let hour = now.getHours();
-            let min = ("0" + now.getMinutes()).slice(-2);
-            document.getElementById("clock-display").innerHTML =
-              hour + ":" + min;
-            document.title = hour + ":" + min + "｜ブラウザで時計";
+            const now = new Date();
+            const h   = now.getHours();
+            const m   = ('0' + now.getMinutes()).slice(-2);
+            const s   = ('0' + now.getSeconds()).slice(-2);
+            document.getElementById('clock-display').textContent =
+              showSeconds ? h + ':' + m + ':' + s : h + ':' + m;
+            document.title = h + ':' + m + '｜ブラウザで時計';
             return showClock;
           })(),
           1000
@@ -126,13 +406,42 @@
     </script>
   </head>
   <body>
+    <div id="settings-overlay"></div>
+
+    <div id="settings-panel">
+      <div class="settings-header">
+        <div class="settings-title">設定</div>
+        <button class="settings-close" id="settings-close">✕</button>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-label">フォント</div>
+        <div class="font-options" id="font-options"></div>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-label">背景の自動切替</div>
+        <div class="interval-options" id="interval-options"></div>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-label">表示オプション</div>
+        <div class="toggle-row">
+          <span class="toggle-text">秒を表示</span>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggle-seconds" />
+            <div class="toggle-track"></div>
+          </label>
+        </div>
+      </div>
+    </div>
+
     <div id="container">
       <div class="menu">
-        <button id="btn_reload" class="btn">
-          <img src="img/reload.png" class="img_button" /></button
-        ><button id="btn_fullscreen" class="btn">
-          <img src="img/fullscreen.png" class="img_button" />
-        </button>
+        <button id="btn_reload" class="btn" data-tooltip="背景を変える">
+          <img src="img/reload.png" class="img_button" /></button><button id="btn_fullscreen" class="btn" data-tooltip="全画面にする">
+          <img src="img/fullscreen.png" class="img_button" /></button><button id="btn_settings" class="btn" data-tooltip="設定">
+          <img src="img/settings.svg" class="img_button" /></button>
       </div>
       <div class="clock" id="clock-display"></div>
     </div>
@@ -144,12 +453,9 @@
     ></script>
     <script>
       window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      gtag("js", new Date());
-
-      gtag("config", "G-L8WE2GBHQ3");
+      function gtag() { dataLayer.push(arguments); }
+      gtag('js', new Date());
+      gtag('config', 'G-L8WE2GBHQ3');
     </script>
     <!-- // ここまで Google Analytics -->
   </body>
