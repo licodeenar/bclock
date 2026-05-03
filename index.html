@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja" prefix="og: https://ogp.me/ns#">
   <head>
     <title>0:00｜ブラウザで時計</title>
@@ -11,7 +11,7 @@
     <meta property="og:title" content="ブラウザで時計" />
     <meta
       property="og:description"
-      content="ブラウザにデジタル時計を表示するだけのサイト"
+      content="ブラウザにデジタル時計を表示するサイト"
     />
     <meta property="og:locale" content="ja_JP" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
@@ -22,7 +22,9 @@
       rel="stylesheet"
     />
     <style>
-      html { height: 100%; }
+      html {
+        height: 100%;
+      }
       body {
         margin: 0;
         color: #fff;
@@ -43,7 +45,9 @@
         position: relative;
         z-index: 10;
       }
-      .img_button { width: 32px; }
+      .img_button {
+        width: 32px;
+      }
       .btn {
         outline: none;
         box-sizing: border-box;
@@ -60,8 +64,12 @@
         justify-content: center;
         vertical-align: middle;
       }
-      .btn:hover { background: rgba(255, 255, 255, 0.2); }
-      .btn[data-tooltip] { position: relative; }
+      .btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+      .btn[data-tooltip] {
+        position: relative;
+      }
       .btn[data-tooltip]::after {
         content: attr(data-tooltip);
         position: absolute;
@@ -77,7 +85,9 @@
         pointer-events: none;
         opacity: 0;
         transform: translateY(-4px);
-        transition: opacity 0.15s, transform 0.15s;
+        transition:
+          opacity 0.15s,
+          transform 0.15s;
       }
       .btn[data-tooltip]:hover::after {
         opacity: 1;
@@ -91,7 +101,9 @@
         inset: 0;
         z-index: 50;
       }
-      #settings-overlay.open { display: block; }
+      #settings-overlay.open {
+        display: block;
+      }
 
       /* ── 設定パネル ── */
       #settings-panel {
@@ -111,7 +123,9 @@
         overflow-y: auto;
         font-family: "Fira Code", monospace;
       }
-      #settings-panel.open { right: 0; }
+      #settings-panel.open {
+        right: 0;
+      }
 
       .settings-header {
         display: flex;
@@ -135,9 +149,14 @@
         border-radius: 4px;
         line-height: 1;
       }
-      .settings-close:hover { color: #fff; background: rgba(255, 255, 255, 0.08); }
+      .settings-close:hover {
+        color: #fff;
+        background: rgba(255, 255, 255, 0.08);
+      }
 
-      .settings-section { margin-bottom: 28px; }
+      .settings-section {
+        margin-bottom: 28px;
+      }
       .settings-label {
         font-size: 10px;
         letter-spacing: 2.5px;
@@ -147,14 +166,20 @@
       }
 
       /* フォント選択 */
-      .font-options { display: flex; flex-direction: column; gap: 6px; }
+      .font-options {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
       .font-option {
         padding: 10px 14px;
         border-radius: 8px;
         border: 1px solid rgba(255, 255, 255, 0.08);
         background: rgba(255, 255, 255, 0.03);
         cursor: pointer;
-        transition: border-color 0.15s, background 0.15s;
+        transition:
+          border-color 0.15s,
+          background 0.15s;
         display: flex;
         align-items: baseline;
         gap: 12px;
@@ -173,7 +198,9 @@
         min-width: 118px;
         font-family: "Fira Code", monospace;
       }
-      .font-option.selected .font-option-name { color: #7bb8ff; }
+      .font-option.selected .font-option-name {
+        color: #7bb8ff;
+      }
       .font-option-preview {
         font-size: 26px;
         color: #fff;
@@ -181,7 +208,11 @@
       }
 
       /* 背景自動切替 */
-      .interval-options { display: flex; flex-wrap: wrap; gap: 7px; }
+      .interval-options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+      }
       .interval-option {
         padding: 8px 14px;
         border-radius: 8px;
@@ -191,7 +222,10 @@
         color: #aaa;
         font-size: 13px;
         font-family: "Fira Code", monospace;
-        transition: border-color 0.15s, background 0.15s, color 0.15s;
+        transition:
+          border-color 0.15s,
+          background 0.15s,
+          color 0.15s;
       }
       .interval-option:hover {
         border-color: rgba(255, 255, 255, 0.25);
@@ -211,24 +245,33 @@
         justify-content: space-between;
         padding: 4px 0;
       }
-      .toggle-text { color: #aaa; font-size: 13px; }
+      .toggle-text {
+        color: #aaa;
+        font-size: 13px;
+      }
       .toggle-switch {
         position: relative;
         width: 44px;
         height: 24px;
         cursor: pointer;
       }
-      .toggle-switch input { opacity: 0; width: 0; height: 0; }
+      .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
       .toggle-track {
         position: absolute;
         inset: 0;
         background: rgba(255, 255, 255, 0.1);
         border: 1px solid rgba(255, 255, 255, 0.12);
         border-radius: 12px;
-        transition: background 0.2s, border-color 0.2s;
+        transition:
+          background 0.2s,
+          border-color 0.2s;
       }
       .toggle-track::after {
-        content: '';
+        content: "";
         position: absolute;
         width: 18px;
         height: 18px;
@@ -236,7 +279,9 @@
         border-radius: 50%;
         top: 2px;
         left: 2px;
-        transition: left 0.2s, background 0.2s;
+        transition:
+          left 0.2s,
+          background 0.2s;
       }
       .toggle-switch input:checked ~ .toggle-track {
         background: rgba(74, 158, 255, 0.25);
@@ -249,54 +294,69 @@
 
       /* 時計 */
       @media (max-width: 670px) {
-        .clock { margin-top: 50px; font-size: 90px; text-align: center; }
+        .clock {
+          margin-top: 50px;
+          font-size: 90px;
+          text-align: center;
+        }
       }
       @media (max-width: 1100px) and (min-width: 671px) {
-        .clock { margin-top: 100px; font-size: 160px; text-align: center; }
+        .clock {
+          margin-top: 100px;
+          font-size: 160px;
+          text-align: center;
+        }
       }
       @media (min-width: 1101px) {
-        .clock { margin-top: 120px; font-size: 230px; text-align: center; }
+        .clock {
+          margin-top: 120px;
+          font-size: 230px;
+          text-align: center;
+        }
       }
     </style>
     <script>
       const FONTS = [
-        { name: 'Fira Code',       css: '"Fira Code", monospace'      },
-        { name: 'Orbitron',        css: '"Orbitron", sans-serif'       },
-        { name: 'VT323',           css: '"VT323", monospace'           },
-        { name: 'Share Tech Mono', css: '"Share Tech Mono", monospace' },
-        { name: 'Bebas Neue',      css: '"Bebas Neue", cursive'        },
+        { name: "Fira Code", css: '"Fira Code", monospace' },
+        { name: "Orbitron", css: '"Orbitron", sans-serif' },
+        { name: "VT323", css: '"VT323", monospace' },
+        { name: "Share Tech Mono", css: '"Share Tech Mono", monospace' },
+        { name: "Bebas Neue", css: '"Bebas Neue", cursive' },
       ];
 
       const INTERVALS = [
-        { value: 0,  label: 'オフ'  },
-        { value: 1,  label: '1分'   },
-        { value: 3,  label: '3分'   },
-        { value: 5,  label: '5分'   },
-        { value: 10, label: '10分'  },
+        { value: 0, label: "オフ" },
+        { value: 1, label: "1分" },
+        { value: 3, label: "3分" },
+        { value: 5, label: "5分" },
+        { value: 10, label: "10分" },
       ];
 
-      let currentFont     = 'Fira Code';
+      let currentFont = "Fira Code";
       let currentInterval = 0;
-      let showSeconds     = false;
+      let showSeconds = false;
       let autoSwitchTimer = null;
-      let reloadImgFn     = null;
+      let reloadImgFn = null;
 
       function loadFromStorage() {
-        currentFont     = localStorage.getItem('bclock_font')     || 'Fira Code';
-        currentInterval = parseInt(localStorage.getItem('bclock_interval') || '0', 10);
-        showSeconds     = localStorage.getItem('bclock_seconds')  === 'true';
+        currentFont = localStorage.getItem("bclock_font") || "Fira Code";
+        currentInterval = parseInt(
+          localStorage.getItem("bclock_interval") || "0",
+          10,
+        );
+        showSeconds = localStorage.getItem("bclock_seconds") === "true";
       }
 
       function saveToStorage() {
-        localStorage.setItem('bclock_font',     currentFont);
-        localStorage.setItem('bclock_interval', currentInterval);
-        localStorage.setItem('bclock_seconds',  showSeconds);
+        localStorage.setItem("bclock_font", currentFont);
+        localStorage.setItem("bclock_interval", currentInterval);
+        localStorage.setItem("bclock_seconds", showSeconds);
       }
 
       function applyFont(fontName) {
-        const font = FONTS.find(f => f.name === fontName) || FONTS[0];
+        const font = FONTS.find((f) => f.name === fontName) || FONTS[0];
         currentFont = font.name;
-        document.getElementById('clock-display').style.fontFamily = font.css;
+        document.getElementById("clock-display").style.fontFamily = font.css;
       }
 
       function applyAutoSwitch(minutes) {
@@ -311,56 +371,68 @@
       function selectFont(fontName) {
         applyFont(fontName);
         saveToStorage();
-        document.querySelectorAll('.font-option').forEach(el => {
-          el.classList.toggle('selected', el.dataset.font === fontName);
+        document.querySelectorAll(".font-option").forEach((el) => {
+          el.classList.toggle("selected", el.dataset.font === fontName);
         });
       }
 
       function selectInterval(minutes) {
         applyAutoSwitch(minutes);
         saveToStorage();
-        document.querySelectorAll('.interval-option').forEach(el => {
-          el.classList.toggle('selected', parseInt(el.dataset.value, 10) === minutes);
+        document.querySelectorAll(".interval-option").forEach((el) => {
+          el.classList.toggle(
+            "selected",
+            parseInt(el.dataset.value, 10) === minutes,
+          );
         });
       }
 
       function buildSettingsPanel() {
-        const fontContainer = document.getElementById('font-options');
-        FONTS.forEach(font => {
-          const el = document.createElement('div');
-          el.className = 'font-option' + (currentFont === font.name ? ' selected' : '');
+        const fontContainer = document.getElementById("font-options");
+        FONTS.forEach((font) => {
+          const el = document.createElement("div");
+          el.className =
+            "font-option" + (currentFont === font.name ? " selected" : "");
           el.dataset.font = font.name;
           el.innerHTML =
-            '<span class="font-option-name">' + font.name + '</span>' +
-            '<span class="font-option-preview" style="font-family:' + font.css + '">0:00</span>';
-          el.addEventListener('click', () => selectFont(font.name));
+            '<span class="font-option-name">' +
+            font.name +
+            "</span>" +
+            '<span class="font-option-preview" style="font-family:' +
+            font.css +
+            '">0:00</span>';
+          el.addEventListener("click", () => selectFont(font.name));
           fontContainer.appendChild(el);
         });
 
-        const intervalContainer = document.getElementById('interval-options');
-        INTERVALS.forEach(interval => {
-          const el = document.createElement('div');
-          el.className = 'interval-option' + (currentInterval === interval.value ? ' selected' : '');
+        const intervalContainer = document.getElementById("interval-options");
+        INTERVALS.forEach((interval) => {
+          const el = document.createElement("div");
+          el.className =
+            "interval-option" +
+            (currentInterval === interval.value ? " selected" : "");
           el.dataset.value = interval.value;
           el.textContent = interval.label;
-          el.addEventListener('click', () => selectInterval(interval.value));
+          el.addEventListener("click", () => selectInterval(interval.value));
           intervalContainer.appendChild(el);
         });
 
-        const toggle = document.getElementById('toggle-seconds');
+        const toggle = document.getElementById("toggle-seconds");
         toggle.checked = showSeconds;
-        toggle.addEventListener('change', function() {
+        toggle.addEventListener("change", function () {
           showSeconds = this.checked;
           saveToStorage();
         });
       }
 
-      window.onload = function() {
+      window.onload = function () {
         loadFromStorage();
 
         reloadImgFn = (function reloadImg() {
-          document.getElementById('container').style.backgroundImage =
-            "url('./img/" + ('0' + Math.floor(Math.random() * 13)).slice(-2) + ".jpg')";
+          document.getElementById("container").style.backgroundImage =
+            "url('./img/" +
+            ("0" + Math.floor(Math.random() * 13)).slice(-2) +
+            ".jpg')";
           return reloadImg;
         })();
 
@@ -368,39 +440,52 @@
         applyFont(currentFont);
         applyAutoSwitch(currentInterval);
 
-        document.getElementById('btn_reload').addEventListener('click', reloadImgFn);
-        const btnFullscreen = document.getElementById('btn_fullscreen');
-        btnFullscreen.addEventListener('click', function() {
+        document
+          .getElementById("btn_reload")
+          .addEventListener("click", reloadImgFn);
+        const btnFullscreen = document.getElementById("btn_fullscreen");
+        btnFullscreen.addEventListener("click", function () {
           if (!document.fullscreenElement) document.body.requestFullscreen();
           else document.exitFullscreen();
         });
-        document.addEventListener('fullscreenchange', function() {
+        document.addEventListener("fullscreenchange", function () {
           btnFullscreen.dataset.tooltip = document.fullscreenElement
-            ? '全画面を解除する'
-            : '全画面にする';
+            ? "全画面を解除する"
+            : "全画面にする";
         });
 
-        const panel   = document.getElementById('settings-panel');
-        const overlay = document.getElementById('settings-overlay');
-        function openSettings()  { panel.classList.add('open');    overlay.classList.add('open');    }
-        function closeSettings() { panel.classList.remove('open'); overlay.classList.remove('open'); }
+        const panel = document.getElementById("settings-panel");
+        const overlay = document.getElementById("settings-overlay");
+        function openSettings() {
+          panel.classList.add("open");
+          overlay.classList.add("open");
+        }
+        function closeSettings() {
+          panel.classList.remove("open");
+          overlay.classList.remove("open");
+        }
 
-        document.getElementById('btn_settings').addEventListener('click', openSettings);
-        document.getElementById('settings-close').addEventListener('click', closeSettings);
-        overlay.addEventListener('click', closeSettings);
+        document
+          .getElementById("btn_settings")
+          .addEventListener("click", openSettings);
+        document
+          .getElementById("settings-close")
+          .addEventListener("click", closeSettings);
+        overlay.addEventListener("click", closeSettings);
 
         setInterval(
           (function showClock() {
             const now = new Date();
-            const h   = now.getHours();
-            const m   = ('0' + now.getMinutes()).slice(-2);
-            const s   = ('0' + now.getSeconds()).slice(-2);
-            document.getElementById('clock-display').textContent =
-              showSeconds ? h + ':' + m + ':' + s : h + ':' + m;
-            document.title = h + ':' + m + '｜ブラウザで時計';
+            const h = now.getHours();
+            const m = ("0" + now.getMinutes()).slice(-2);
+            const s = ("0" + now.getSeconds()).slice(-2);
+            document.getElementById("clock-display").textContent = showSeconds
+              ? h + ":" + m + ":" + s
+              : h + ":" + m;
+            document.title = h + ":" + m + "｜ブラウザで時計";
             return showClock;
           })(),
-          1000
+          1000,
         );
       };
     </script>
@@ -439,9 +524,12 @@
     <div id="container">
       <div class="menu">
         <button id="btn_reload" class="btn" data-tooltip="背景を変える">
-          <img src="img/reload.png" class="img_button" /></button><button id="btn_fullscreen" class="btn" data-tooltip="全画面にする">
-          <img src="img/fullscreen.png" class="img_button" /></button><button id="btn_settings" class="btn" data-tooltip="設定">
-          <img src="img/settings.svg" class="img_button" /></button>
+          <img src="img/reload.png" class="img_button" /></button
+        ><button id="btn_fullscreen" class="btn" data-tooltip="全画面にする">
+          <img src="img/fullscreen.png" class="img_button" /></button
+        ><button id="btn_settings" class="btn" data-tooltip="設定">
+          <img src="img/settings.svg" class="img_button" />
+        </button>
       </div>
       <div class="clock" id="clock-display"></div>
     </div>
@@ -453,9 +541,11 @@
     ></script>
     <script>
       window.dataLayer = window.dataLayer || [];
-      function gtag() { dataLayer.push(arguments); }
-      gtag('js', new Date());
-      gtag('config', 'G-L8WE2GBHQ3');
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "G-L8WE2GBHQ3");
     </script>
     <!-- // ここまで Google Analytics -->
   </body>
