@@ -431,13 +431,18 @@
           el.className =
             "font-option" + (currentFont === font.name ? " selected" : "");
           el.dataset.font = font.name;
-          el.innerHTML =
-            '<span class="font-option-name">' +
-            font.name +
-            "</span>" +
-            '<span class="font-option-preview" style="font-family:' +
-            font.css +
-            '">0:00</span>';
+
+          const nameSpan = document.createElement("span");
+          nameSpan.className = "font-option-name";
+          nameSpan.textContent = font.name;
+
+          const previewSpan = document.createElement("span");
+          previewSpan.className = "font-option-preview";
+          previewSpan.style.fontFamily = font.css;
+          previewSpan.textContent = "0:00";
+
+          el.appendChild(nameSpan);
+          el.appendChild(previewSpan);
           el.addEventListener("click", () => selectFont(font.name));
           fontContainer.appendChild(el);
         });
