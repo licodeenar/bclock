@@ -67,6 +67,15 @@
       .btn:hover {
         background: rgba(255, 255, 255, 0.2);
       }
+      @media (hover: none) {
+        .btn:hover {
+          background: rgba(0, 0, 0, 0.6);
+        }
+        .btn[data-tooltip]:hover::after {
+          opacity: 0;
+          transform: translateY(-4px);
+        }
+      }
       .btn[data-tooltip] {
         position: relative;
       }
@@ -382,12 +391,24 @@
         }
       }
 
+      function fitClockFont() {
+        const el = document.getElementById("clock-display");
+        el.style.fontSize = "";
+        const avail = document.documentElement.clientWidth * 0.92;
+        if (el.scrollWidth > avail) {
+          const natural = parseFloat(getComputedStyle(el).fontSize);
+          el.style.fontSize =
+            Math.floor((natural * avail) / el.scrollWidth) + "px";
+        }
+      }
+
       function selectFont(fontName) {
         applyFont(fontName);
         saveToStorage();
         document.querySelectorAll(".font-option").forEach((el) => {
           el.classList.toggle("selected", el.dataset.font === fontName);
         });
+        fitClockFont();
       }
 
       function selectInterval(minutes) {
@@ -487,6 +508,8 @@
           .addEventListener("click", closeSettings);
         overlay.addEventListener("click", closeSettings);
 
+        window.addEventListener("resize", fitClockFont);
+
         setInterval(
           (function showClock() {
             const now = new Date();
@@ -497,6 +520,7 @@
               ? h + ":" + m + ":" + s
               : h + ":" + m;
             document.title = h + ":" + m + "｜ブラウザで時計";
+            fitClockFont();
             return showClock;
           })(),
           1000,
