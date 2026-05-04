@@ -121,6 +121,7 @@
         right: -340px;
         width: 320px;
         height: 100vh;
+        height: 100dvh;
         background: rgba(8, 8, 18, 0.93);
         backdrop-filter: blur(14px);
         -webkit-backdrop-filter: blur(14px);
@@ -130,6 +131,7 @@
         box-sizing: border-box;
         z-index: 100;
         overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
         font-family: "Fira Code", monospace;
       }
       #settings-panel.open {
@@ -487,6 +489,12 @@
           btnFullscreen.dataset.tooltip = document.fullscreenElement
             ? "全画面を解除する"
             : "全画面にする";
+        });
+
+        document.querySelectorAll(".btn").forEach(function (btn) {
+          btn.addEventListener("touchend", function () {
+            this.blur();
+          });
         });
 
         const panel = document.getElementById("settings-panel");
