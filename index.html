@@ -55,7 +55,7 @@
         border: none;
         width: 48px;
         height: 48px;
-        background: rgba(0, 0, 0, 0.6);
+        background: rgba(0, 0, 0, 0.3);
         cursor: pointer;
         color: #fff;
         font-size: 22px;
@@ -486,9 +486,13 @@
           else document.exitFullscreen();
         });
         document.addEventListener("fullscreenchange", function () {
-          btnFullscreen.dataset.tooltip = document.fullscreenElement
+          const isFullscreen = !!document.fullscreenElement;
+          btnFullscreen.dataset.tooltip = isFullscreen
             ? "全画面を解除する"
             : "全画面にする";
+          btnFullscreen.querySelector("img").src = isFullscreen
+            ? "img/exitfullscreen.png"
+            : "img/fullscreen.png";
         });
 
         document.querySelectorAll(".btn").forEach(function (btn) {
